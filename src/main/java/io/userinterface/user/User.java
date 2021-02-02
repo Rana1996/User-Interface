@@ -42,7 +42,7 @@ public class User {
 	}
 
 	public String getLocation() {
-		return address.split(",")[0];
+		return address.split(",")[0].replaceAll(" ", "-");
 	}
 
 	public void setName(String name) {

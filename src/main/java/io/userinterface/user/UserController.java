@@ -20,7 +20,7 @@ public class UserController {
     }
 
     @RequestMapping("/users/{id}")
-    public User getById(@PathVariable int id) {
+    public User getById(@PathVariable long id) {
         return service.getById(id) ;
     }
 
@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @RequestMapping("/users/city/{city}")
-    public List<User> getUsersInCity(@PathVariable String city) {
+    public Stream<User> getUsersInCity(@PathVariable String city) {
         return service.getByCity(city);
     }
 
@@ -45,7 +45,8 @@ public class UserController {
     }
 
     @RequestMapping(method=RequestMethod.DELETE, value="/users/{id}")
-    public void delete(@RequestBody long id) {
+    public void delete(@PathVariable long id) {
+        System.out.println(id);
         service.deleteUser(id);
     }
 
