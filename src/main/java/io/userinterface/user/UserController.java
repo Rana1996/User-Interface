@@ -5,7 +5,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Stream;
 
 @RestController
@@ -46,7 +45,6 @@ public class UserController {
 
     @RequestMapping(method=RequestMethod.DELETE, value="/users/{id}")
     public void delete(@PathVariable long id) {
-        System.out.println(id);
         service.deleteUser(id);
     }
 

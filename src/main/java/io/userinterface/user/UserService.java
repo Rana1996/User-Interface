@@ -14,8 +14,17 @@ public class UserService {
     private HashMap<String, HashMap<Long, User>> city = new HashMap<>();
     private HashMap<String, HashMap<Long, User>> age = new HashMap<>();
 
+    Lambda add2Map = (map, item, user) -> {
+        if(map.containsKey(item))
+            map.get(item).put(user.getDriverLicence(), user);
+        else {
+            HashMap m = new HashMap();
+            m.put(user.getDriverLicence(), user);
+            map.put(item, m);
+        }
+    };
+
     public List<User> getAllUsers() {
-        printAll();
         return new ArrayList<>(users.values());
     }
 
@@ -25,8 +34,6 @@ public class UserService {
         add2Map.fun(city, user.getLocation(), user);
         add2Map.fun(age, user.getAge(), user);
         users.put(user.getDriverLicence(), user);
-
-        printAll();
     }
 
     public void updateUser(User user) {
@@ -42,6 +49,7 @@ public class UserService {
                 })
                 .flatMap(entry -> entry.getValue().values().stream());
     }
+
     public Stream<User> getByCity(String _city) {
         return city.get(_city).values().stream();
     }
@@ -52,24 +60,14 @@ public class UserService {
     }
 
     public void deleteUser(long driverLicence) {
-        System.out.println("$$$$$$$$$$$$$$$$$ In Delete $$$$$$$$$$$$$$$$$");
         if(!users.containsKey(driverLicence)) return;
         User us = users.get(driverLicence);
         users.remove(driverLicence);
-        HashMap cityUsers = city.get(us.getLocation());
-        System.out.println("City value");
-//        printMap.fun(cityUsers);
-        cityUsers.remove(driverLicence);
-        HashMap ageUsers = age.get(us.getLocation());
-        System.out.println("Age value");
-//        printMap.fun(cityUsers);
+        city.get(us.getLocation()).remove(driverLicence);
         age.get(us.getAge()).remove(driverLicence);
-        System.out.println("$$$$$$$$$$$$$$$$$ Printing after delete $$$$$$$$$$$$$$$$$");
-//        printAll();
     }
 
     /////////////////////////////////////////////////////////// For testing
-
     PrintStream printStream = stream -> {
         stream.forEach(u -> u.print());
     };
@@ -78,16 +76,6 @@ public class UserService {
         city.keySet().stream().forEach(key -> System.out.print(key + " "));
         System.out.println();
         printStream.fun(map.entrySet().stream().flatMap(entry -> entry.getValue().values().stream()));
-    };
-
-    Lambda add2Map = (map, item, user) -> {
-        if(map.containsKey(item))
-            map.get(item).put(user.getDriverLicence(), user);
-        else {
-            HashMap m = new HashMap();
-            m.put(user.getDriverLicence(), user);
-            map.put(item, m);
-        }
     };
 
     private void printAll() {
