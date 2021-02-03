@@ -42,10 +42,12 @@ public class UserService {
     }
 
     public Stream<User> getByAge(int min, int max) {
+        if(min > max)
+            return null;
         return age.entrySet().stream()
                 .filter(entry -> {
                     int key = Integer.parseInt(entry.getKey());
-                    return key  > min && key < max;
+                    return key  >= min && key <= max;
                 })
                 .flatMap(entry -> entry.getValue().values().stream());
     }
