@@ -1,10 +1,9 @@
 package io.userinterface.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.stream.Stream;
 
 @RestController
@@ -14,7 +13,7 @@ public class UserController {
     private UserService service;
 
     @RequestMapping("/users")
-    public Collection<User> getAllUsers() {
+    public List<User> getAllUsers() {
         return service.getAllUsers() ;
     }
 
