@@ -36,8 +36,8 @@ public class UserService {
         users.put(user.getDriverLicence(), user);
     }
 
-    public void updateUser(User user) {
-        deleteUser(user.getDriverLicence());
+    public void updateUser(long id, User user) {
+        deleteUser(id);
         addUser(user);
     }
 

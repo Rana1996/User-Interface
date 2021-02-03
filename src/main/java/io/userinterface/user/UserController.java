@@ -38,8 +38,8 @@ public class UserController {
     }
 
     @RequestMapping(method=RequestMethod.PUT, value="/users/{id}")
-    public void updateUser(@RequestBody User user) {
-        service.updateUser(user);
+    public void updateUser(@PathVariable long id, @RequestBody User user) {
+        service.updateUser(id, user);
     }
 
     @RequestMapping(method=RequestMethod.DELETE, value="/users/{id}")
