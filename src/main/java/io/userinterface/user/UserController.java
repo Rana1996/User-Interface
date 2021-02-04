@@ -1,6 +1,8 @@
 package io.userinterface.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,17 +20,21 @@ public class UserController {
     }
 
     @RequestMapping("/users/{id}")
-    public User getById(@PathVariable long id) {
-        return service.getById(id) ;
+    public ResponseEntity getById(@PathVariable long id) {
+        User user = service.getById(id);
+        if(user == null) {
+            return new ResponseEntity<String>("No User With this ID: " + id , HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<User> (user, HttpStatus.OK);
     }
 
-    @RequestMapping("/users/age/{min}/{max}")
-    public Stream<User> getByAge(@PathVariable int min, @PathVariable int max) {
+    @RequestMapping("/users/age")
+    public Stream<User> getByAge(@RequestParam int min, @RequestParam int max) {
         return service.getByAge(min, max);
     }
 
-    @RequestMapping("/users/city/{city}")
-    public Stream<User> getUsersInCity(@PathVariable String city) {
+    @RequestMapping("/users/city")
+    public Stream<User> getUsersInCity(@RequestParam String city) {
         return service.getByCity(city);
     }
 

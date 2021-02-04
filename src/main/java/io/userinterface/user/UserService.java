@@ -1,6 +1,7 @@
 package io.userinterface.user;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +48,7 @@ public class UserService {
         return age.entrySet().stream()
                 .filter(entry -> {
                     int key = Integer.parseInt(entry.getKey());
-                    return key  >= min && key <= max;
+                    return key >= min && key <= max;
                 })
                 .flatMap(entry -> entry.getValue().values().stream());
     }
@@ -102,3 +103,6 @@ interface PrintStream {
 interface PrintMap {
     void fun(HashMap<String, HashMap<Long, User>> map);
 }
+
+
+
