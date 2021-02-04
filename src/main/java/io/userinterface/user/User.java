@@ -2,10 +2,6 @@ package io.userinterface.user;
 
 import io.userinterface.creditcard.CreditCard;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
-
 public class User {
 	private String name;
 	private String address;
@@ -31,20 +27,14 @@ public class User {
 	public String getContactInfo() {
 		return contactInfo;
 	}
+	public String getBirthdate() {
+		return birthdate;
+	}
 	public CreditCard getCreditCard() {
 		return creditCard;
 	}
 	public long getDriverLicence() {
 		return driverLicence;
-	}
-
-	private SplitDate splitDate = (s, n) -> Integer.parseInt(s.split("/")[n]);;
-
-	public String getAge() {
-		LocalDate now = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		int sub = splitDate.fun(birthdate, 1) > now.getMonthValue() ? 1 : 0;
-
-		return String.valueOf(now.getYear() - splitDate.fun(birthdate, 2) - sub);
 	}
 
 	public String getLocation() {
@@ -74,8 +64,4 @@ public class User {
 		System.out.print(name + ", " + address + ", " + contactInfo + ", " + birthdate + ", " + driverLicence);
 		System.out.println();
 	}
-}
-
-interface SplitDate {
-	int fun(String s, int n);
 }

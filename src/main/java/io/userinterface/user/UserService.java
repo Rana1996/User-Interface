@@ -1,9 +1,11 @@
 package io.userinterface.user;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Stream;
@@ -15,7 +17,20 @@ public class UserService {
     private HashMap<String, HashMap<Long, User>> city = new HashMap<>();
     private HashMap<String, HashMap<Long, User>> age = new HashMap<>();
 
-    Lambda add2Map = (map, item, user) -> {
+    String2Int toInt = (s) -> Integer.parseInt(s);
+
+    String2Int birthdate2Age = (birthDate) -> {
+        String[] bd = birthDate.split("/");
+        int d = toInt.fun(bd[0]), m = toInt.fun(bd[1]), y = toInt.fun(bd[2]);
+
+		LocalDate now = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        int sub = 0;
+        if(m == now.getMonthValue() && d >= now.getDayOfMonth() || m > now.getMonthValue())
+            sub = 1;
+        return now.getYear() - y - sub;
+    };
+
+    MapOfMaps add2Map = (map, item, user) -> {
         if(map.containsKey(item))
             map.get(item).put(user.getDriverLicence(), user);
         else {
@@ -29,17 +44,20 @@ public class UserService {
         return new ArrayList<>(users.values());
     }
 
-    public void addUser(User user) {
+    public boolean addUser(User user) {
         if(users.containsKey(user.getDriverLicence()))
-            return;
+            return false;
         add2Map.fun(city, user.getLocation(), user);
-        add2Map.fun(age, user.getAge(), user);
+        add2Map.fun(age, user.getBirthdate(), user);
         users.put(user.getDriverLicence(), user);
+        return true;
     }
 
-    public void updateUser(long id, User user) {
+    public boolean updateUser(long id, User user) {
+        if(!users.containsKey(id)) return false;
         deleteUser(id);
         addUser(user);
+        return true;
     }
 
     public Stream<User> getByAge(int min, int max) {
@@ -47,7 +65,7 @@ public class UserService {
             return null;
         return age.entrySet().stream()
                 .filter(entry -> {
-                    int key = Integer.parseInt(entry.getKey());
+                    int key = birthdate2Age.fun(entry.getKey());
                     return key >= min && key <= max;
                 })
                 .flatMap(entry -> entry.getValue().values().stream());
@@ -62,12 +80,13 @@ public class UserService {
         return users.get(driverLicence);
     }
 
-    public void deleteUser(long driverLicence) {
-        if(!users.containsKey(driverLicence)) return;
+    public boolean deleteUser(long driverLicence) {
+        if(!users.containsKey(driverLicence)) return false;
         User us = users.get(driverLicence);
         users.remove(driverLicence);
         city.get(us.getLocation()).remove(driverLicence);
-        age.get(us.getAge()).remove(driverLicence);
+        age.get(us.getBirthdate()).remove(driverLicence);
+        return true;
     }
 
     /////////////////////////////////////////////////////////// For testing
@@ -92,7 +111,7 @@ public class UserService {
     }
 }
 
-interface Lambda {
+interface MapOfMaps {
     void fun(HashMap<String, HashMap<Long, User>> map, String item, User user);
 }
 
@@ -104,5 +123,8 @@ interface PrintMap {
     void fun(HashMap<String, HashMap<Long, User>> map);
 }
 
+interface String2Int {
+    int fun(String s);
+}
 
 
